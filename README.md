@@ -18,4 +18,4 @@ You should see this in the console:
 
 It may take a couple seconds for the preview to run.
 
-Edit the code inside [src/App.tsx](src/App.tsx)
+Edit the code inside [src/App.tsx](src/App.tsx) and hit CTRL+S to save. You should see the preview update automatically. If not, click the reload button.
