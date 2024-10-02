@@ -20,7 +20,7 @@ const Preview_Runner_Do_Not_Edit = () => {
           const pathParts = path.split('/');
           const taskId = pathParts[2];
           const fileName = pathParts.pop();
-          
+
           loadedTasks.push({
             id: taskId,
             name: fileName,
@@ -75,16 +75,14 @@ const Preview_Runner_Do_Not_Edit = () => {
                   {renderFolder(content, `${path}/${name}`)}
                 </>
               ) : (
-                <span 
-                  className={`flex items-center cursor-pointer ${
-                    currentTask && content.fullPath === currentTask.fullPath
-                      ? 'font-bold'
-                      : ''
-                  } ${
-                    content.isValid
-                      ? 'text-white hover:text-blue-300'
+                <span
+                  className={`flex items-center cursor-pointer ${content.isValid
+                      ? 'text-white hover:text-green-200'
                       : 'text-yellow-300 hover:text-yellow-100'
-                  }`}
+                    } ${currentTask && content.fullPath === currentTask.fullPath
+                      ? 'font-bold text-green-400 hover:text-green-400'
+                      : ''
+                    }`}
                   onClick={() => {
                     setCurrentTask(content);
                     if (!content.isValid) {
@@ -123,15 +121,17 @@ const Preview_Runner_Do_Not_Edit = () => {
         )}
       </div>
       <button 
-        onClick={() => setShowHierarchy(!showHierarchy)} 
-        className="fixed bottom-4 left-4 px-4 py-2 bg-black bg-opacity-10 rounded z-10"
-      >
-        {currentTask && (
-          `Task ${currentTask.id}: ${currentTask.name}`
-        )}
-      </button>
+      onClick={() => setShowHierarchy((prev) => !prev)} 
+      className="fixed bottom-4 left-4 px-4 py-2 bg-black bg-opacity-10 rounded z-10"
+    >
+      {currentTask && (
+        <>
+          Task {currentTask.id}: <span className="font-bold">{currentTask.name}</span>
+        </>
+      )}
+    </button>
       {showHierarchy && (
-        <div className="fixed bottom-16 left-4 p-4 bg-black bg-opacity-75 rounded max-h-[70vh] w-[300px] overflow-auto">
+        <div className="fixed bottom-16 left-4 p-4 bg-black bg-opacity-75 backdrop-blur-md rounded max-h-[70vh] w-[300px] overflow-auto">
           <h3 className="text-lg font-semibold mb-2 text-white">Select Preview File</h3>
           <FolderHierarchy />
         </div>

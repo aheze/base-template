@@ -16,9 +16,28 @@ You should see this in the console:
   ➜  press h + enter to show help
 ```
 
-It may take a couple seconds for the preview to run.
+It may take a couple seconds for the preview to run. Use the file selector in the bottom-left to change preview files.
 
-To preview your code, go to [src/preview_runner.tsx](src/preview_runner.tsx) and 
+Your data must follow this format:
+
+```
+- src
+  - tasks
+    - 12345
+      - 1a.jsx
+      - 1b.jsx
+      - 1ideal.jsx
+      - 2a.jsx
+      - 2b.jsx
+      - 2ideal.jsx
+    - 12346
+      - 1a.jsx
+      - 1b.jsx
+      - 1ideal.jsx
+      - 2a.jsx
+      - 2b.jsx
+      - 2ideal.jsx
+```
 
 
 Edit the code inside [src/App.jsx](src/App.jsx) and hit CTRL+S to save. You should see the preview update automatically. If not, click the reload button.
