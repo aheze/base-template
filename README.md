@@ -18,4 +18,7 @@ You should see this in the console:
 
 It may take a couple seconds for the preview to run.
 
+To preview your code, go to [src/preview_runner.tsx](src/preview_runner.tsx) and 
+
+
 Edit the code inside [src/App.jsx](src/App.jsx) and hit CTRL+S to save. You should see the preview update automatically. If not, click the reload button.
