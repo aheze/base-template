@@ -76,13 +76,13 @@ const Preview_Runner_Do_Not_Edit = () => {
                 </>
               ) : (
                 <span
-                  className={`flex items-center cursor-pointer ${content.isValid
-                      ? 'text-white hover:text-green-200'
+                  className={`flex items-center cursor-pointer ${
+                    content.isValid
+                      ? currentTask && content.fullPath === currentTask.fullPath
+                        ? 'font-bold text-green-400 hover:text-green-400'
+                        : 'text-white hover:text-green-200'
                       : 'text-yellow-300 hover:text-yellow-100'
-                    } ${currentTask && content.fullPath === currentTask.fullPath
-                      ? 'font-bold text-green-400 hover:text-green-400'
-                      : ''
-                    }`}
+                  }`}
                   onClick={() => {
                     setCurrentTask(content);
                     if (!content.isValid) {
