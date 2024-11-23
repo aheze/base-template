@@ -1,13 +1,4 @@
 import React, { useState, useEffect } from "react";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-
 const GRID_SIZE = 5;
 const INITIAL_MOVES = 15;
 
@@ -16,21 +7,19 @@ export default function App() {
   const [playerPos, setPlayerPos] = useState({ x: 0, y: 0 });
   const [score, setScore] = useState(0);
   const [movesLeft, setMovesLeft] = useState(INITIAL_MOVES);
-  const [gameStatus, setGameStatus] = useState(""); // "win", "lose", or ""
+  const [gameStatus, setGameStatus] = useState(""); 
   const [treasuresLeft, setTreasuresLeft] = useState(0);
 
-  // Generate a new game grid
   const generateGrid = () => {
     const newGrid = Array.from({ length: GRID_SIZE }, () =>
       Array.from({ length: GRID_SIZE }, () => {
         const rand = Math.random();
-        if (rand < 0.2) return "treasure"; // 20% chance for treasure
-        if (rand < 0.3) return "trap"; // 10% chance for trap
+        if (rand < 0.2) return "treasure"; 
+        if (rand < 0.3) return "trap"; 
         return "empty";
       })
     );
 
-    // Count treasures in the grid
     const treasures = newGrid.flat().filter((cell) => cell === "treasure")
       .length;
 
@@ -42,35 +31,29 @@ export default function App() {
     setTreasuresLeft(treasures);
   };
 
-  // Initialize the grid on component mount
   useEffect(() => {
     generateGrid();
   }, []);
 
-  // Handle player movement
   const movePlayer = (dx, dy) => {
-    if (gameStatus) return; // Disable movement if the game is over
-
+    if (gameStatus) return; 
     const newX = playerPos.x + dx;
     const newY = playerPos.y + dy;
 
-    if (newX < 0 || newX >= GRID_SIZE || newY < 0 || newY >= GRID_SIZE) return; // Prevent moving out of bounds
+    if (newX < 0 || newX >= GRID_SIZE || newY < 0 || newY >= GRID_SIZE) return; 
 
     const cell = grid[newY][newX];
 
-    // Update grid and game state based on the cell content
     setPlayerPos({ x: newX, y: newY });
     setMovesLeft((prev) => prev - 1);
 
     if (cell === "treasure") {
       setScore((prev) => prev + 10);
       setTreasuresLeft((prev) => prev - 1);
-      grid[newY][newX] = "found"; // Mark the treasure as collected
+      grid[newY][newX] = "found"; 
     } else if (cell === "trap") {
       setScore((prev) => prev - 5);
     }
-
-    // Check if the game is over
     if (movesLeft - 1 <= 0) {
       setGameStatus("lose");
     } else if (treasuresLeft - 1 === 0) {
@@ -78,12 +61,10 @@ export default function App() {
     }
   };
 
-  // Reset the game state
   const resetGame = () => {
     generateGrid();
   };
 
-  // Handle keyboard input for movement
   const handleKeyPress = (e) => {
     switch (e.key) {
       case "ArrowUp":
@@ -103,7 +84,6 @@ export default function App() {
     }
   };
 
-  // Add keypress event listener
   useEffect(() => {
     window.addEventListener("keydown", handleKeyPress);
     return () => window.removeEventListener("keydown", handleKeyPress);
