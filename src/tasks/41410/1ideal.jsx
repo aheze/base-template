@@ -1,16 +1,17 @@
+// Importing necessary modules and components
 import React, { useState } from "react";
 import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
 
-// Utility Functions
+// Utility function to calculate the word count of the text
 const calculateWordCount = (text) => text.split(/\s+/).filter(Boolean).length;
 
+// Utility function to generate word cloud data
 const generateWordCloudData = (text) => {
   const words = text.toLowerCase().split(/\s+/).filter(Boolean);
   const frequency = words.reduce((acc, word) => {
@@ -20,12 +21,12 @@ const generateWordCloudData = (text) => {
   return Object.entries(frequency).map(([word, count]) => ({ word, count }));
 };
 
+// Utility function to analyze the sentiment of the text
 const analyzeSentiment = (text) => {
   const positiveWords = ["good", "great", "excellent", "positive", "happy"];
   const negativeWords = ["bad", "poor", "terrible", "negative", "sad"];
   const tokens = text.toLowerCase().split(/\s+/);
-  let positive = 0,
-    negative = 0;
+  let positive = 0, negative = 0;
 
   tokens.forEach((token) => {
     if (positiveWords.includes(token)) positive++;
@@ -37,11 +38,13 @@ const analyzeSentiment = (text) => {
   return { emoji: "😐", label: "Neutral" };
 };
 
+// Utility function to extract key sentences from the text
 const extractKeySentences = (text) => {
   const sentences = text.match(/[^.!?]+[.!?]/g) || [];
   return sentences.slice(0, 3);
 };
 
+// Utility function to calculate readability score of the text
 const calculateReadabilityScore = (text) => {
   const sentences = text.match(/[^.!?]+[.!?]/g)?.length || 1;
   const words = calculateWordCount(text);
@@ -51,7 +54,7 @@ const calculateReadabilityScore = (text) => {
   return Math.max(1, Math.min(12, Math.round(15 - score / 10)));
 };
 
-// Components
+// InputSection component to handle user input
 const InputSection = ({ text, setText, onAnalyze }) => (
   <div className="space-y-4">
     <textarea
@@ -75,8 +78,9 @@ const InputSection = ({ text, setText, onAnalyze }) => (
   </div>
 );
 
+// WordCloud component to display word frequency visually
 const WordCloud = ({ data }) => (
-  <Card className="mb-4 animate-fade-in">
+  <Card className="mb-4">
     <CardHeader>
       <CardTitle>Word Cloud</CardTitle>
       <CardDescription>Visual representation of word frequency</CardDescription>
@@ -102,8 +106,9 @@ const WordCloud = ({ data }) => (
   </Card>
 );
 
+// Sentiment component to display sentiment analysis results
 const Sentiment = ({ result }) => (
-  <Card className="mb-4 animate-fade-in">
+  <Card className="mb-4">
     <CardHeader>
       <CardTitle>Sentiment Analysis</CardTitle>
       <CardDescription>
@@ -111,53 +116,41 @@ const Sentiment = ({ result }) => (
       </CardDescription>
     </CardHeader>
     <CardContent>
-      <p className="text-2xl transition-transform transform hover:scale-105">
-        {result.emoji} {result.label}
-      </p>
+      <p className="text-2xl">{result.emoji} {result.label}</p>
     </CardContent>
   </Card>
 );
 
+// KeySentences component to display key sentences
 const KeySentences = ({ sentences }) => (
-  <Card className="mb-4 animate-slide-in">
+  <Card className="mb-4">
     <CardHeader>
       <CardTitle>Key Sentences</CardTitle>
       <CardDescription>Highlighted important sentences</CardDescription>
     </CardHeader>
     <CardContent className="space-y-2">
       {sentences.map((sentence, idx) => (
-        <div
-          key={idx}
-          className="flex justify-between items-center p-2 border rounded-md shadow hover:shadow-lg transition-shadow"
-        >
+        <div key={idx} className="p-2 border rounded-md">
           <p>{sentence}</p>
-          <button
-            className="bg-gray-200 px-2 py-1 rounded hover:bg-gray-300 transition"
-            onClick={() => navigator.clipboard.writeText(sentence)}
-          >
-            Copy
-          </button>
         </div>
       ))}
     </CardContent>
   </Card>
 );
 
+// Readability component to display readability score
 const Readability = ({ score }) => (
-  <Card className="mb-4 animate-fade-in">
+  <Card className="mb-4">
     <CardHeader>
       <CardTitle>Readability Score</CardTitle>
       <CardDescription>
-        <span>
-          Grade Level: {score}{" "}
-          <span className="text-gray-500">(1 = Easy, 12 = Difficult)</span>
-        </span>
+        Grade Level: {score} (1 = Easy, 12 = Difficult)
       </CardDescription>
     </CardHeader>
   </Card>
 );
 
-// Main App
+// Main App component
 export default function App() {
   const [text, setText] = useState("");
   const [wordCloudData, setWordCloudData] = useState([]);
@@ -173,18 +166,16 @@ export default function App() {
   };
 
   return (
-    <div
-      className="min-h-screen p-4 bg-gradient-to-b from-gray-50 to-gray-200 text-gray-900"
-    >
+    <div className="min-h-screen p-4 bg-gray-50">
       <header className="mb-8 text-center">
-        <h1 className="text-4xl font-bold text-blue-500 animate-fade-in">
+        <h1 className="text-4xl font-bold text-blue-500">
           Interactive Article Analyzer
         </h1>
         <p className="text-gray-600">Transform text into meaningful insights</p>
       </header>
       <main className="space-y-8">
         <InputSection text={text} setText={setText} onAnalyze={handleAnalyze} />
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {wordCloudData.length > 0 && <WordCloud data={wordCloudData} />}
           {sentimentResult && <Sentiment result={sentimentResult} />}
           {keySentences.length > 0 && <KeySentences sentences={keySentences} />}

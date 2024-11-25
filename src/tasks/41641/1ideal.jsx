@@ -1,3 +1,4 @@
+// Importing required libraries and UI components
 import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -7,9 +8,11 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import { ThumbsDown, ThumbsUp, Bookmark, Shuffle } from "lucide-react";
 
+// Categories and joke types
 const categories = ["Animals", "Technology", "Puns", "Dad Jokes", "Random"];
 const jokeTypes = ["Short", "Pun", "Anecdote"];
 
+// Emoji map for categories
 const emojiMap = {
   Animals: "🐶",
   Technology: "💻",
@@ -18,6 +21,7 @@ const emojiMap = {
   Random: "🎲",
 };
 
+// Joke dataset
 const jokesDataset = {
   Animals: ["Why don’t skeletons fight each other? They don’t have the guts. 🦴"],
   Technology: ["Why was the computer cold? It left its Windows open. 🖥️"],
@@ -26,11 +30,13 @@ const jokesDataset = {
   Random: ["Why did the scarecrow win an award? He was outstanding in his field. 🌾"],
 };
 
+// Function to fetch a random joke
 const getRandomJoke = (category) => {
   const jokes = jokesDataset[category] || jokesDataset["Random"];
   return jokes[Math.floor(Math.random() * jokes.length)];
 };
 
+// JokeCard component
 const JokeCard = ({ joke, emoji, onSave, onRate }) => (
   <Card className="w-full max-w-md mx-auto shadow-lg rounded-lg">
     <CardHeader>
@@ -55,6 +61,7 @@ const JokeCard = ({ joke, emoji, onSave, onRate }) => (
   </Card>
 );
 
+// CreateJoke component
 const CreateJoke = ({ onSave }) => {
   const [joke, setJoke] = useState("");
 
@@ -84,6 +91,7 @@ const CreateJoke = ({ onSave }) => {
   );
 };
 
+// Main App component
 export default function App() {
   const [category, setCategory] = useState("Random");
   const [jokeType, setJokeType] = useState("Short");

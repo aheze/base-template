@@ -9,6 +9,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
+// Predefined categories for expense tracking
 const predefinedCategories = [
   { name: "Rent", color: "bg-blue-500" },
   { name: "Food", color: "bg-green-500" },
@@ -18,6 +19,7 @@ const predefinedCategories = [
   { name: "Miscellaneous", color: "bg-gray-500" },
 ];
 
+// Conversion rates for supported currencies
 const currencyRates = {
   USD: 1,
   EUR: 0.85,
@@ -25,21 +27,24 @@ const currencyRates = {
 };
 
 export default function App() {
-  const [currency, setCurrency] = useState("USD");
-  const [exchangeRate, setExchangeRate] = useState(1);
-  const [categories, setCategories] = useState(predefinedCategories);
-  const [expenses, setExpenses] = useState({});
-  const [monthlyBudget, setMonthlyBudget] = useState(1000);
-  const [customCategory, setCustomCategory] = useState("");
-  const [expenseAmount, setExpenseAmount] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState("");
-  const [savingsGoal, setSavingsGoal] = useState(200);
-  const [showDarkMode, setShowDarkMode] = useState(false);
+  // States for managing app data
+  const [currency, setCurrency] = useState("USD"); // Selected currency
+  const [exchangeRate, setExchangeRate] = useState(1); // Current exchange rate
+  const [categories, setCategories] = useState(predefinedCategories); // Expense categories
+  const [expenses, setExpenses] = useState({}); // Expense data
+  const [monthlyBudget, setMonthlyBudget] = useState(1000); // Monthly budget
+  const [customCategory, setCustomCategory] = useState(""); // Custom category input
+  const [expenseAmount, setExpenseAmount] = useState(""); // Expense input
+  const [selectedCategory, setSelectedCategory] = useState(""); // Selected category
+  const [savingsGoal, setSavingsGoal] = useState(200); // Savings goal
+  const [showDarkMode, setShowDarkMode] = useState(false); // Dark mode toggle
 
+  // Update exchange rate when the currency changes
   useEffect(() => {
     setExchangeRate(currencyRates[currency]);
   }, [currency]);
 
+  // Function to add a new expense
   const handleAddExpense = () => {
     if (!selectedCategory || !expenseAmount) return;
     const amountInUSD = parseFloat(expenseAmount) / exchangeRate;
@@ -51,6 +56,7 @@ export default function App() {
     setSelectedCategory("");
   };
 
+  // Function to add a custom category
   const handleAddCategory = () => {
     if (!customCategory) return;
     setCategories((prev) => [
@@ -60,6 +66,7 @@ export default function App() {
     setCustomCategory("");
   };
 
+  // Function to export expenses to CSV format
   const exportExpenses = () => {
     const csvRows = [
       ["Category", "Amount"],
@@ -80,11 +87,15 @@ export default function App() {
     URL.revokeObjectURL(url);
   };
 
+  // Calculated total expenses and remaining budget
   const totalExpenses = Object.values(expenses).reduce((sum, val) => sum + val, 0);
   const remainingBudget = monthlyBudget - totalExpenses;
+
+  // Helper to calculate progress bar width for a category
   const progressBarWidth = (category) =>
     ((expenses[category] || 0) / monthlyBudget) * 100;
 
+  // Spending alert message
   const spendingAlert = remainingBudget < 0 ? "You have exceeded your budget!" : "";
 
   return (
@@ -93,6 +104,7 @@ export default function App() {
         showDarkMode ? "bg-gray-900 text-gray-100" : "bg-gray-100 text-gray-900"
       } p-6`}
     >
+      {/* Header Section */}
       <header className="text-center mb-6">
         <h1 className="text-4xl font-extrabold text-blue-600">
           Global Expense Tracker
@@ -109,7 +121,7 @@ export default function App() {
       </header>
 
       <main className="max-w-4xl mx-auto space-y-6">
-        {/* Currency and Budget Section */}
+        {/* Settings Section */}
         <Card>
           <CardHeader>
             <CardTitle>Settings</CardTitle>

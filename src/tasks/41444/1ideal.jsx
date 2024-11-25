@@ -1,3 +1,4 @@
+// Import necessary modules and components
 import React, { useState } from "react";
 import {
   Card,
@@ -7,6 +8,7 @@ import {
 } from "@/components/ui/card";
 
 export default function App() {
+  // State variables for managing article data and user interactions
   const [article, setArticle] = useState("");
   const [keywords, setKeywords] = useState([]);
   const [hierarchicalMap, setHierarchicalMap] = useState([]);
@@ -16,6 +18,7 @@ export default function App() {
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [summary, setSummary] = useState("");
 
+  // Process the article to extract insights
   const processArticle = () => {
     if (!article.trim()) return;
 
@@ -30,6 +33,7 @@ export default function App() {
     setSummary(generatedSummary);
   };
 
+  // Extract frequently used keywords from the text
   const extractKeywords = (text) => {
     const words = text.toLowerCase().split(/\s+/);
     const frequency = words.reduce((acc, word) => {
@@ -42,6 +46,7 @@ export default function App() {
       .map(([word]) => word);
   };
 
+  // Generate a hierarchical map based on article sections
   const generateHierarchicalMap = (text) => {
     const sections = text.split("\n").filter((line) => line.trim().length > 0);
     return sections.map((section, index) => ({
@@ -51,6 +56,7 @@ export default function App() {
     }));
   };
 
+  // Detect and map years in the article to a timeline
   const detectTimeline = (text) => {
     const regex = /\b\d{4}\b/g;
     const matches = text.match(regex) || [];
@@ -61,21 +67,25 @@ export default function App() {
     }));
   };
 
+  // Summarize the article into a concise summary
   const summarizeArticle = (text) => {
     const sentences = text.split(". ");
     return sentences.slice(0, 3).join(". ") + ".";
   };
 
+  // Handle user interactions with nodes
   const handleNodeClick = (node) => {
     setSelectedNode(node);
     setSelectedEvent(null);
   };
 
+  // Handle user interactions with timeline events
   const handleEventClick = (event) => {
     setSelectedEvent(event);
     setSelectedNode(null);
   };
 
+  // Add user annotations to a section
   const handleAddAnnotation = (sectionId, annotationText) => {
     setAnnotations((prev) => ({
       ...prev,

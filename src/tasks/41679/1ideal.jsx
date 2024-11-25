@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 
+// Component to display individual suggestions
 function SuggestionCard({ suggestion, onAction }) {
   return (
     <Card
@@ -34,6 +35,7 @@ function SuggestionCard({ suggestion, onAction }) {
   );
 }
 
+// Component to display progress bars for user goals
 function ProgressBar({ value, max, label }) {
   const percentage = (value / max) * 100;
 
@@ -60,7 +62,9 @@ function ProgressBar({ value, max, label }) {
   );
 }
 
+// Main App component
 function App() {
+  // State for managing suggestions and user stats
   const [suggestions, setSuggestions] = useState([]);
   const [userStats, setUserStats] = useState({
     waterIntake: 3, // glasses
@@ -70,6 +74,7 @@ function App() {
     upcomingDeadlines: 1,
   });
 
+  // Generate suggestions dynamically based on user stats
   useEffect(() => {
     const generateSuggestions = () => {
       let newSuggestions = [];
@@ -117,6 +122,7 @@ function App() {
     generateSuggestions();
   }, [userStats]);
 
+  // Handle user actions for suggestions
   const handleAction = (action) => {
     switch (action) {
       case "logWater":

@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 
+// List of pet care questions with associated metrics and weights
 const petCareQuestions = [
   {
     question: "How often do you feed your pet?",
@@ -31,16 +32,17 @@ const petCareQuestions = [
 ];
 
 export default function App() {
-  const [currentPet, setCurrentPet] = useState(null);
-  const [petName, setPetName] = useState("");
-  const [answers, setAnswers] = useState([]);
+  const [currentPet, setCurrentPet] = useState(null); // Currently adopted pet
+  const [petName, setPetName] = useState(""); // Name of the adopted pet
+  const [answers, setAnswers] = useState([]); // User's answers to questions
   const [metrics, setMetrics] = useState({
     happiness: 50,
     health: 50,
     cleanliness: 50,
-  });
-  const [showResults, setShowResults] = useState(false);
+  }); // Pet care metrics
+  const [showResults, setShowResults] = useState(false); // Toggle for showing results
 
+  // Handle pet adoption by setting the selected pet
   const handleAdoptPet = (species) => {
     setCurrentPet({ species });
     setAnswers([]);
@@ -48,12 +50,14 @@ export default function App() {
     setShowResults(false);
   };
 
+  // Handle answering a question and updating answers
   const handleAnswer = (index, weight) => {
     const updatedAnswers = [...answers];
     updatedAnswers[index] = weight;
     setAnswers(updatedAnswers);
   };
 
+  // Calculate metrics based on answers and update metrics state
   const calculateMetrics = () => {
     let happiness = 50;
     let health = 50;

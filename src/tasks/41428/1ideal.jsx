@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import {
   Card,
@@ -9,6 +8,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 
+// A collection of medical terms with their definitions, symptoms, and treatments
 const medicalTerms = {
   Hypertension: {
     definition: "High blood pressure.",
@@ -16,12 +16,12 @@ const medicalTerms = {
     treatments: ["Lifestyle changes", "Medication"],
   },
   Antibiotics: {
-    definition:
-      "Drugs used to treat bacterial infections by killing or inhibiting bacterial growth.",
+    definition: "Drugs used to treat bacterial infections by killing or inhibiting bacterial growth.",
     uses: ["Treating infections", "Preventing infections post-surgery"],
   },
 };
 
+// A list of daily health tips
 const dailyHealthTips = [
   "Drink at least 8 cups of water daily.",
   "Exercise for 30 minutes a day to stay active.",
@@ -29,8 +29,9 @@ const dailyHealthTips = [
 ];
 
 function MedicalDictionary() {
+  // State to hold the search input
   const [search, setSearch] = useState("");
-  const term = medicalTerms[search] || null;
+  const term = medicalTerms[search] || null; // Lookup for the searched term
 
   return (
     <Card className="max-w-lg mx-auto mb-4">
@@ -80,9 +81,11 @@ function MedicalDictionary() {
 }
 
 function SymptomChecker() {
+  // State to manage symptom input and the determined condition
   const [symptom, setSymptom] = useState("");
   const [condition, setCondition] = useState(null);
 
+  // Check symptoms to provide a potential condition
   const handleCheck = () => {
     if (symptom.toLowerCase().includes("headache")) {
       setCondition("Potential Condition: Migraine or Hypertension");
@@ -127,10 +130,12 @@ function SymptomChecker() {
 }
 
 function HealthCalculators() {
+  // State for user inputs: height, weight, and BMI result
   const [height, setHeight] = useState("");
   const [weight, setWeight] = useState("");
   const [result, setResult] = useState(null);
 
+  // Calculate BMI based on height and weight
   const calculateBMI = () => {
     const bmi = weight / ((height / 100) ** 2);
     setResult(`Your BMI is ${bmi.toFixed(2)}`);
@@ -172,6 +177,7 @@ function HealthCalculators() {
 }
 
 function DailyTips() {
+  // Displays daily health tips
   return (
     <Card className="max-w-lg mx-auto mb-4">
       <CardHeader>
@@ -189,6 +195,7 @@ function DailyTips() {
 }
 
 function Dashboard({ onToggleTheme }) {
+  // The main dashboard that integrates all components
   return (
     <div>
       <MedicalDictionary />
@@ -206,6 +213,7 @@ function Dashboard({ onToggleTheme }) {
 }
 
 export default function App() {
+  // State to manage dark mode
   const [darkMode, setDarkMode] = useState(false);
 
   return (

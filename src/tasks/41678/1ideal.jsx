@@ -7,14 +7,21 @@ import {
 } from "@/components/ui/card";
 
 export default function App() {
+  // State for managing gratitude entries
   const [gratitudeEntries, setGratitudeEntries] = useState([]);
+  // State for current gratitude input fields
   const [currentGratitude, setCurrentGratitude] = useState(["", "", ""]);
+  // State for selected mood emoji
   const [mood, setMood] = useState("😊");
+  // State for the current affirmation
   const [affirmation, setAffirmation] = useState("");
+  // State to manage the selected theme (light/dark)
   const [theme, setTheme] = useState("light");
+  // State for suggestions and exercises
   const [suggestion, setSuggestion] = useState("");
   const [exercise, setExercise] = useState("");
 
+  // List of affirmations to be displayed randomly
   const affirmations = [
     "I am capable of amazing things.",
     "I choose to focus on the positive.",
@@ -23,6 +30,7 @@ export default function App() {
     "I radiate positivity and gratitude.",
   ];
 
+  // Predefined suggestions for different mood states
   const suggestions = {
     hopeful: [
       "Take a deep breath and try this: Inhale for 4 seconds, hold for 7, and exhale for 8.",
@@ -41,16 +49,19 @@ export default function App() {
     ],
   };
 
+  // On component mount, set a random affirmation
   useEffect(() => {
     setAffirmation(affirmations[Math.floor(Math.random() * affirmations.length)]);
   }, []);
 
+  // Updates the current gratitude input fields
   const handleGratitudeChange = (index, value) => {
     const updatedGratitude = [...currentGratitude];
     updatedGratitude[index] = value;
     setCurrentGratitude(updatedGratitude);
   };
 
+  // Analyzes mood based on the content of gratitude entries
   const analyzeMoodAndRecommendExercise = (entries) => {
     const positiveWords = ["happy", "grateful", "joy", "love", "peace"];
     const negativeWords = ["sad", "angry", "tired", "stressed", "hopeless"];
@@ -58,12 +69,14 @@ export default function App() {
     let positiveCount = 0;
     let negativeCount = 0;
 
+    // Count positive and negative words in the gratitude entries
     entries.forEach((entry) => {
       const words = entry.toLowerCase().split(/\s+/);
       positiveCount += words.filter((word) => positiveWords.includes(word)).length;
       negativeCount += words.filter((word) => negativeWords.includes(word)).length;
     });
 
+    // Determine the suggestion and exercise based on the mood analysis
     if (negativeCount > positiveCount) {
       setSuggestion("You seem to be feeling down. Here's a suggestion to lift your spirits.");
       setExercise(
@@ -86,19 +99,21 @@ export default function App() {
     }
   };
 
+  // Saves the current gratitude entries and resets the input fields
   const saveEntry = () => {
     if (currentGratitude.some((item) => item.trim() !== "")) {
       const newEntry = {
-        date: new Date().toLocaleDateString(),
-        gratitude: currentGratitude,
-        mood,
+        date: new Date().toLocaleDateString(), // Stores the current date
+        gratitude: currentGratitude, // Stores the gratitude entries
+        mood, // Stores the selected mood
       };
-      setGratitudeEntries([newEntry, ...gratitudeEntries]);
-      setCurrentGratitude(["", "", ""]);
-      analyzeMoodAndRecommendExercise(currentGratitude);
+      setGratitudeEntries([newEntry, ...gratitudeEntries]); // Add the new entry to the list
+      setCurrentGratitude(["", "", ""]); // Reset the input fields
+      analyzeMoodAndRecommendExercise(currentGratitude); // Analyze mood and provide suggestions
     }
   };
 
+  // Generates a pie chart SVG based on the mood distribution
   const generatePieChart = () => {
     const moodCounts = gratitudeEntries.reduce(
       (acc, entry) => {
@@ -158,6 +173,7 @@ export default function App() {
     );
   };
 
+  // Renders the chart legend
   const renderChartLegend = () => (
     <div className="flex justify-center mt-4 space-x-4">
       {["😊", "😌", "😃", "😢", "😡"].map((mood, index) => (
@@ -174,6 +190,7 @@ export default function App() {
     </div>
   );
 
+  // Renders suggestion and exercise if available
   const renderSuggestionAndExercise = () => (
     suggestion && (
       <Card className="mt-6 p-4 bg-yellow-100 text-yellow-800 rounded-lg shadow animate-floating">

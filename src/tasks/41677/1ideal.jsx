@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from "react";
+// Import React and UI components
+import React, { useState } from "react";
 import {
   Card,
   CardContent,
@@ -7,32 +8,38 @@ import {
 } from "@/components/ui/card";
 
 export default function App() {
-  const [name, setName] = useState("");
-  const [dob, setDob] = useState("");
-  const [gender, setGender] = useState("");
-  const [message, setMessage] = useState("");
-  const [daysUntilBirthday, setDaysUntilBirthday] = useState(null);
-  const [showCountdown, setShowCountdown] = useState(false);
-  const [theme, setTheme] = useState("pastel");
+  const [name, setName] = useState(""); // User's name
+  const [dob, setDob] = useState(""); // User's date of birth
+  const [gender, setGender] = useState(""); // User's gender
+  const [message, setMessage] = useState(""); // Birthday message
+  const [daysUntilBirthday, setDaysUntilBirthday] = useState(null); // Days until next birthday
+  const [showCountdown, setShowCountdown] = useState(false); // Countdown visibility
+  const [theme, setTheme] = useState("pastel"); // UI theme
 
+  // Calculate the number of days until the next birthday and set a message
   const calculateBirthday = () => {
     const today = new Date();
     const birthDate = new Date(dob);
+
+    // Validate DOB
     if (birthDate > today || isNaN(birthDate)) {
       setMessage("Please enter a valid date of birth.");
       return;
     }
+
+    // Adjust birthDate to the current year, or next year if already passed
     birthDate.setFullYear(today.getFullYear());
     if (birthDate < today) {
-      birthDate.setFullYear(today.getFullYear() + 1); 
+      birthDate.setFullYear(today.getFullYear() + 1);
     }
 
     const daysLeft = Math.ceil(
-      (birthDate - today) / (1000 * 60 * 60 * 24)
+      (birthDate - today) / (1000 * 60 * 60 * 24) // Convert milliseconds to days
     );
 
     setDaysUntilBirthday(daysLeft);
 
+    // Set a special message if it's the user's birthday
     if (daysLeft === 0) {
       const genderMessage =
         gender === "male"
@@ -50,6 +57,7 @@ export default function App() {
     setShowCountdown(true);
   };
 
+  // Render a visual countdown with bouncing dots
   const renderCountdown = () => {
     if (daysUntilBirthday === null || daysUntilBirthday === 0) return null;
 
@@ -70,7 +78,10 @@ export default function App() {
     );
   };
 
+  // Handle theme selection
   const handleThemeChange = (newTheme) => setTheme(newTheme);
+
+  // Render a section with fun birthday facts
   const renderBirthdayFacts = () => (
     <div className="mt-6">
       <h3 className="text-xl font-bold text-gray-700">Did You Know?</h3>
@@ -91,6 +102,7 @@ export default function App() {
           : "bg-gray-800"
       } text-gray-900 p-6`}
     >
+      {/* Header Section */}
       <header className="text-center mb-6">
         <h1 className="text-5xl font-extrabold text-blue-600 animate-pulse">
           Wish Me Birthday 🎉

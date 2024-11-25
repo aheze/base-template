@@ -1,3 +1,4 @@
+// Import required libraries and components
 import React, { useState, useEffect } from "react";
 import {
   Card,
@@ -19,6 +20,7 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Progress } from "@/components/ui/progress";
 
+// Generate all available time zones
 const allTimeZones = Intl.supportedValuesOf("timeZone").map((tz) => ({
   id: tz,
   name: tz.replace("_", " "),
@@ -28,6 +30,7 @@ const allTimeZones = Intl.supportedValuesOf("timeZone").map((tz) => ({
   }).split(" ").slice(-1)[0],
 }));
 
+// World map placeholder component
 const WorldMap = () => (
   <div className="w-full h-72 bg-gradient-to-br from-blue-300 to-blue-500 dark:from-gray-800 dark:to-gray-900 rounded-lg relative shadow-lg">
     <div className="absolute inset-0 flex items-center justify-center text-white">
@@ -36,6 +39,7 @@ const WorldMap = () => (
   </div>
 );
 
+// Clock component to show current time for a time zone
 const Clock = ({ timeZone }) => {
   const [time, setTime] = useState(new Date());
 
@@ -62,6 +66,7 @@ const Clock = ({ timeZone }) => {
   );
 };
 
+// Time zone converter component
 const TimeZoneConverter = () => {
   const [sourceZone, setSourceZone] = useState(allTimeZones[0]);
   const [targetZone, setTargetZone] = useState(allTimeZones[1]);
@@ -138,6 +143,7 @@ const TimeZoneConverter = () => {
   );
 };
 
+// Scheduler for meetings across time zones
 const MeetingScheduler = () => {
   const [participants, setParticipants] = useState([]);
   const [meetingTime, setMeetingTime] = useState("12:00");
@@ -208,37 +214,9 @@ const MeetingScheduler = () => {
   );
 };
 
-const GlobalInsights = () => (
-  <Card>
-    <CardHeader>
-      <CardTitle>Global Insights</CardTitle>
-    </CardHeader>
-    <CardContent>
-      <ul className="list-disc ml-6 space-y-2">
-        <li>France has the most time zones of any country (12).</li>
-        <li>China uses a single time zone (Beijing Time), even though it spans 5 time zones.</li>
-        <li>The Pacific Island of Kiribati was the first to see the year 2000.</li>
-      </ul>
-    </CardContent>
-  </Card>
-);
-
-const ProgressTracking = ({ stats }) => (
-  <Card>
-    <CardHeader>
-      <CardTitle>Progress Tracking</CardTitle>
-    </CardHeader>
-    <CardContent>
-      <p>Meetings Scheduled: {stats.meetings}</p>
-      <p>Time Zone Conversions: {stats.conversions}</p>
-      <Progress value={(stats.meetings / 10) * 100} className="mt-2" />
-    </CardContent>
-  </Card>
-);
-
+// Main application
 export default function App() {
   const [darkMode, setDarkMode] = useState(false);
-  const [stats, setStats] = useState({ meetings: 0, conversions: 0 });
 
   useEffect(() => {
     if (darkMode) {
@@ -264,25 +242,8 @@ export default function App() {
         </div>
 
         <WorldMap />
-
-        <Tabs defaultValue="converter">
-          <TabsList className="grid w-full grid-cols-3">
-            <TabsTrigger value="converter">Converter</TabsTrigger>
-            <TabsTrigger value="scheduler">Scheduler</TabsTrigger>
-            <TabsTrigger value="insights">Insights</TabsTrigger>
-          </TabsList>
-          <TabsContent value="converter">
-            <TimeZoneConverter />
-          </TabsContent>
-          <TabsContent value="scheduler">
-            <MeetingScheduler />
-          </TabsContent>
-          <TabsContent value="insights">
-            <GlobalInsights />
-          </TabsContent>
-        </Tabs>
-
-        <ProgressTracking stats={stats} />
+        <TimeZoneConverter />
+        <MeetingScheduler />
       </div>
     </div>
   );

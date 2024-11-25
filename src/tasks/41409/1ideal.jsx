@@ -1,3 +1,4 @@
+// Import necessary React and UI components
 import React, { useState } from "react";
 import {
   Card,
@@ -7,11 +8,13 @@ import {
 } from "@/components/ui/card";
 
 export default function App() {
+  // State variables for managing input and results
   const [jobDescription, setJobDescription] = useState("");
   const [analysisResults, setAnalysisResults] = useState(null);
   const [darkMode, setDarkMode] = useState(false);
   const [error, setError] = useState(false);
 
+  // Function to analyze the job description
   const analyzeJobDescription = () => {
     if (!jobDescription.trim()) {
       setError(true);
@@ -21,7 +24,7 @@ export default function App() {
 
     setError(false);
 
-    // Simulated analysis
+    // Simulated analysis using helper functions
     const skills = extractSkills(jobDescription);
     const experienceLevel = detectExperienceLevel(jobDescription);
     const responsibilities = extractResponsibilities(jobDescription);
@@ -37,6 +40,7 @@ export default function App() {
     });
   };
 
+  // Function to extract skills from the job description
   const extractSkills = (text) => {
     const keywords = [
       "JavaScript",
@@ -54,6 +58,7 @@ export default function App() {
     return frequency;
   };
 
+  // Function to detect the experience level
   const detectExperienceLevel = (text) => {
     if (text.includes("entry-level")) return "Entry Level";
     if (text.includes("5+ years") || text.includes("senior")) return "Senior Level";
@@ -62,11 +67,13 @@ export default function App() {
     return "Not Specified";
   };
 
+  // Function to extract responsibilities
   const extractResponsibilities = (text) => {
     const sentences = text.match(/[^.!?]+[.!?]/g) || [];
     return sentences.slice(0, 3); 
   };
 
+  // Function to analyze the company culture
   const analyzeCompanyCulture = (text) => {
     if (text.includes("collaborative") || text.includes("fun")) {
       return { emoji: "🎉", description: "Fun and Collaborative" };
@@ -77,8 +84,10 @@ export default function App() {
     return { emoji: "🏢", description: "Formal and Results-Driven" };
   };
 
+  // Function to calculate a random fit score
   const calculateFitScore = () => Math.floor(Math.random() * 41) + 60;
 
+  // Function to export the analysis results as a text file
   const exportResults = () => {
     const content = `Skills:\n${analysisResults.skills
       .map((s) => `${s.skill}: ${s.count} times`)
@@ -109,6 +118,7 @@ Fit Score: ${analysisResults.fitScore}%`;
       </header>
 
       <main className="space-y-6">
+        {/* Input Section */}
         <div className="space-y-4">
           <textarea
             className="w-full p-4 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 transition"
@@ -131,12 +141,14 @@ Fit Score: ${analysisResults.fitScore}%`;
           </div>
         </div>
 
+        {/* Error Message */}
         {error && (
           <div className="text-red-500 text-center">
             Please provide a job description to analyze.
           </div>
         )}
 
+        {/* Analysis Results */}
         {analysisResults && (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 animate-fade-in">
             {/* Skills Word Cloud */}
@@ -232,6 +244,7 @@ Fit Score: ${analysisResults.fitScore}%`;
           </div>
         )}
 
+        {/* Export Results */}
         {analysisResults && (
           <div className="text-center">
             <button

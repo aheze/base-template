@@ -1,3 +1,4 @@
+// Import necessary modules and components
 import React, { useState } from "react";
 import {
   Card,
@@ -7,6 +8,7 @@ import {
 } from "@/components/ui/card";
 
 export default function App() {
+  // State to manage game board, turn, winner, score, and draw
   const [board, setBoard] = useState(Array(9).fill(null));
   const [isXNext, setIsXNext] = useState(true);
   const [winner, setWinner] = useState(null);
@@ -14,6 +16,7 @@ export default function App() {
   const [draw, setDraw] = useState(false);
   const [winningCombination, setWinningCombination] = useState([]);
 
+  // Winning combinations for Tic Tac Toe
   const winningCombinations = [
     [0, 1, 2],
     [3, 4, 5],
@@ -25,17 +28,18 @@ export default function App() {
     [2, 4, 6],
   ];
 
+  // Handle click event for a cell
   const handleClick = (index) => {
-    if (board[index] || winner || draw) return; 
+    if (board[index] || winner || draw) return; // Prevent changes if cell is occupied or game is over
 
     const newBoard = [...board];
-    newBoard[index] = isXNext ? "X" : "O";
+    newBoard[index] = isXNext ? "X" : "O"; // Mark cell with current player's symbol
     setBoard(newBoard);
-    setIsXNext(!isXNext);
-
-    checkGameStatus(newBoard);
+    setIsXNext(!isXNext); // Toggle turn
+    checkGameStatus(newBoard); // Check game status
   };
 
+  // Check if there is a winner or a draw
   const checkGameStatus = (newBoard) => {
     // Check for a winner
     for (let combo of winningCombinations) {
@@ -45,12 +49,12 @@ export default function App() {
         newBoard[a] === newBoard[b] &&
         newBoard[a] === newBoard[c]
       ) {
-        setWinner(newBoard[a]);
+        setWinner(newBoard[a]); // Set winner
         setScore((prev) => ({
           ...prev,
           [newBoard[a]]: prev[newBoard[a]] + 1,
-        }));
-        setWinningCombination(combo);
+        })); // Update score
+        setWinningCombination(combo); // Highlight winning combination
         return;
       }
     }
@@ -61,6 +65,7 @@ export default function App() {
     }
   };
 
+  // Reset the game state for a new round
   const resetGame = () => {
     setBoard(Array(9).fill(null));
     setIsXNext(true);
@@ -69,8 +74,9 @@ export default function App() {
     setWinningCombination([]);
   };
 
+  // Render a single cell of the board
   const renderCell = (index) => {
-    const isWinningCell = winningCombination.includes(index);
+    const isWinningCell = winningCombination.includes(index); // Check if cell is part of winning combination
 
     return (
       <div

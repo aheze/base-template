@@ -1,3 +1,4 @@
+// Importing React and necessary UI components
 import React, { useState } from "react";
 import {
   Card,
@@ -8,6 +9,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 
+// Profile Setup Component
 function ProfileSetup({ onSubmit }) {
   const [profile, setProfile] = useState({
     age: "",
@@ -17,15 +19,18 @@ function ProfileSetup({ onSubmit }) {
     activityLevel: "moderate",
   });
 
-  const [error, setError] = useState("");
+  const [error, setError] = useState(""); // Error state for validation messages
 
+  // Options for fitness goals and activity levels
   const fitnessGoals = ["weight loss", "muscle gain", "maintenance"];
   const activityLevels = ["sedentary", "light", "moderate", "active"];
 
+  // Update profile state on input change
   const handleChange = (key, value) => {
     setProfile((prev) => ({ ...prev, [key]: value }));
   };
 
+  // Calculate calorie requirements based on user input
   const calculateCalories = () => {
     const { weight, height, age, activityLevel, fitnessGoal } = profile;
     const activityMultiplier = {
@@ -34,13 +39,18 @@ function ProfileSetup({ onSubmit }) {
       moderate: 1.55,
       active: 1.725,
     };
-    let bmr = 10 * weight + 6.25 * height - 5 * age + 5; 
-    bmr *= activityMultiplier[activityLevel];
-    if (fitnessGoal === "weight loss") bmr -= 500; 
-    if (fitnessGoal === "muscle gain") bmr += 500; 
+
+    let bmr = 10 * weight + 6.25 * height - 5 * age + 5; // Mifflin-St Jeor formula
+    bmr *= activityMultiplier[activityLevel]; // Adjust based on activity level
+
+    // Adjust based on fitness goal
+    if (fitnessGoal === "weight loss") bmr -= 500;
+    if (fitnessGoal === "muscle gain") bmr += 500;
+
     return Math.round(bmr);
   };
 
+  // Handle form submission and validate inputs
   const handleSubmit = () => {
     if (
       !profile.age ||
@@ -49,12 +59,12 @@ function ProfileSetup({ onSubmit }) {
       !profile.fitnessGoal ||
       !profile.activityLevel
     ) {
-      setError("All fields are required!");
+      setError("All fields are required!"); // Show error message
       return;
     }
     setError("");
-    const calories = calculateCalories();
-    onSubmit({ ...profile, calories });
+    const calories = calculateCalories(); // Calculate calories
+    onSubmit({ ...profile, calories }); // Pass data to parent component
   };
 
   return (
@@ -123,7 +133,9 @@ function ProfileSetup({ onSubmit }) {
   );
 }
 
+// DietSuggestion Component
 function DietSuggestion({ weight }) {
+  // Generate suggestions based on weight
   const isWeightLow = weight < 70;
   const suggestions = isWeightLow
     ? [
@@ -156,8 +168,10 @@ function DietSuggestion({ weight }) {
   );
 }
 
+// Dashboard Component
 function Dashboard({ profile }) {
   const { calories, weight } = profile;
+
   return (
     <div className="space-y-6">
       <h1 className="text-3xl font-bold text-center text-blue-600">
@@ -176,6 +190,7 @@ function Dashboard({ profile }) {
   );
 }
 
+// Main App Component
 export default function App() {
   const [profile, setProfile] = useState(null);
 

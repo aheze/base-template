@@ -85,7 +85,7 @@ export default function App() {
       <Card className="w-full max-w-md">
         <CardHeader>
           <CardTitle className="text-2xl font-bold text-center">
-            {!started ? "Reinforcement Learning Quiz" : `Question ${currentQuestion + 1} of 5`}
+            {!started ? "Learning Quiz" : `Question ${currentQuestion + 1} of 5`}
           </CardTitle>
         </CardHeader>
         {!started ? (

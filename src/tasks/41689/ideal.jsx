@@ -10,6 +10,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
+// Predefined health conditions and their respective recommendations
 const conditionsData = {
   Diabetes: {
     medications: [
@@ -63,24 +64,30 @@ const conditionsData = {
 };
 
 export default function App() {
+  // State to manage selected conditions
   const [selectedConditions, setSelectedConditions] = useState([]);
+  // State to capture user-added custom symptoms
   const [customSymptoms, setCustomSymptoms] = useState("");
+  // State to toggle visibility of recommendations
   const [showRecommendations, setShowRecommendations] = useState(false);
 
+  // Function to add/remove a condition from the selected list
   const toggleCondition = (condition) => {
     setSelectedConditions((prev) =>
       prev.includes(condition)
-        ? prev.filter((c) => c !== condition)
-        : [...prev, condition]
+        ? prev.filter((c) => c !== condition) // Remove if already selected
+        : [...prev, condition] // Add if not selected
     );
   };
 
+  // Function to show recommendations for selected conditions
   const handleGetRecommendations = () => {
     setShowRecommendations(true);
   };
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-100 to-white text-gray-800 p-6">
+      {/* App Header */}
       <header className="text-center mb-6">
         <h1 className="text-4xl font-extrabold text-blue-600">Health Companion</h1>
         <p className="text-gray-600">Manage your health with personalized insights.</p>

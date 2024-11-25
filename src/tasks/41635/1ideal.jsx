@@ -1,3 +1,4 @@
+// Import necessary modules and components
 import React, { useState, useEffect } from "react";
 import {
   Card,
@@ -8,9 +9,9 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 
+// Constants for moods, affirmations, and meditation guides
 const MOOD_OPTIONS = [
   { emoji: "😀", mood: "Happy" },
   { emoji: "😔", mood: "Sad" },
@@ -33,6 +34,7 @@ const MEDITATION_GUIDES = {
   sleep: "Picture a quiet, starry sky. Take slow, deep breaths, and let the day's worries fade away.",
 };
 
+// Component for mood tracking
 function MoodTracker({ onMoodSelect, moodLog }) {
   return (
     <Card>
@@ -60,6 +62,7 @@ function MoodTracker({ onMoodSelect, moodLog }) {
   );
 }
 
+// Component for daily reflections
 function DailyReflections({ onReflectionSubmit, reflections }) {
   const [reflection, setReflection] = useState("");
 
@@ -94,6 +97,7 @@ function DailyReflections({ onReflectionSubmit, reflections }) {
   );
 }
 
+// Component for mindfulness exercises
 function MindfulnessExercises() {
   const [guide, setGuide] = useState("");
 
@@ -117,6 +121,7 @@ function MindfulnessExercises() {
   );
 }
 
+// Component for daily affirmations
 function AffirmationGenerator() {
   const [affirmation, setAffirmation] = useState("");
 
@@ -145,6 +150,7 @@ function AffirmationGenerator() {
   );
 }
 
+// Component for tracking user progress
 function ProgressTracking({ moodLog, reflections }) {
   return (
     <Card className="mt-4">
@@ -160,6 +166,7 @@ function ProgressTracking({ moodLog, reflections }) {
   );
 }
 
+// Main app component
 export default function App() {
   const [moodLog, setMoodLog] = useState([]);
   const [reflections, setReflections] = useState([]);

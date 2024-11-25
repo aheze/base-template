@@ -1,3 +1,4 @@
+// Import React and UI components
 import React, { useState } from "react";
 import {
   Card,
@@ -7,24 +8,27 @@ import {
   CardFooter,
 } from "@/components/ui/card";
 
+// Main App Component
 function App() {
-  const [users, setUsers] = useState([]); 
-  const [user, setUser] = useState(null); 
-  const [currentPage, setCurrentPage] = useState("home"); 
-  const [enrolledCourses, setEnrolledCourses] = useState([]);
+  const [users, setUsers] = useState([]); // Store registered users
+  const [user, setUser] = useState(null); // Logged-in user
+  const [currentPage, setCurrentPage] = useState("home"); // Current page state
+  const [enrolledCourses, setEnrolledCourses] = useState([]); // Enrolled courses
   const [availableCourses] = useState([
     { id: 1, title: "Mathematics 101" },
     { id: 2, title: "Physics Basics" },
     { id: 3, title: "Creative Writing" },
     { id: 4, title: "Intro to Programming" },
-  ]); // Available courses
+  ]); // Static list of available courses
 
+  // Handle user signup
   const handleSignup = (newUser) => {
     setUsers([...users, newUser]);
     setUser(newUser);
     setCurrentPage("dashboard");
   };
 
+  // Handle user login
   const handleLogin = (email, password) => {
     const existingUser = users.find(
       (u) => u.email === email && u.password === password
@@ -38,6 +42,7 @@ function App() {
     }
   };
 
+  // Enroll user in a course
   const enrollInCourse = (course) => {
     if (!enrolledCourses.find((c) => c.id === course.id)) {
       const updatedCourses = [...enrolledCourses, course];
@@ -48,6 +53,7 @@ function App() {
     }
   };
 
+  // Navigation handler
   const navigate = (page) => setCurrentPage(page);
 
   return (
@@ -74,6 +80,7 @@ function App() {
   );
 }
 
+// Header Component
 function Header({ user, navigate }) {
   return (
     <header className="bg-white shadow-md sticky top-0 z-10 text-gray-800">
@@ -132,6 +139,7 @@ function Header({ user, navigate }) {
   );
 }
 
+// Footer Component
 function Footer() {
   return (
     <footer className="bg-gray-800 text-gray-200 py-4">
@@ -142,6 +150,7 @@ function Footer() {
   );
 }
 
+// Home Component
 function Home({ navigate }) {
   return (
     <div className="text-center">
@@ -165,6 +174,7 @@ function Home({ navigate }) {
   );
 }
 
+// Signup Component
 function Signup({ onSignup }) {
   const [formData, setFormData] = useState({
     name: "",
@@ -247,6 +257,7 @@ function Signup({ onSignup }) {
   );
 }
 
+// Login Component
 function Login({ onLogin }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -291,6 +302,7 @@ function Login({ onLogin }) {
   );
 }
 
+// Dashboard Component
 function Dashboard({ user, enrolledCourses }) {
   return (
     <div>
@@ -312,6 +324,7 @@ function Dashboard({ user, enrolledCourses }) {
   );
 }
 
+// Courses Component
 function Courses({ availableCourses, enrolledCourses, enrollInCourse }) {
   return (
     <div>
@@ -349,6 +362,7 @@ function Courses({ availableCourses, enrolledCourses, enrollInCourse }) {
   );
 }
 
+// Profile Component
 function Profile({ user }) {
   return (
     <div>

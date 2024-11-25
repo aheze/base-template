@@ -1,3 +1,4 @@
+// Import necessary modules and components
 import React, { useState } from "react";
 import {
   Card,
@@ -7,13 +8,14 @@ import {
 } from "@/components/ui/card";
 
 export default function App() {
+  // State variables for data management and visualization options
   const [data, setData] = useState([]);
   const [headers, setHeaders] = useState([]);
   const [chartType, setChartType] = useState("bar");
   const [selectedX, setSelectedX] = useState("");
   const [selectedY, setSelectedY] = useState("");
 
-  // File processing for CSV and JSON files
+  // Handle file uploads for CSV and JSON data
   const handleFileUpload = (e) => {
     const file = e.target.files[0];
     if (!file) return;
@@ -22,12 +24,15 @@ export default function App() {
     reader.onload = (event) => {
       const content = event.target.result;
 
+      // Process JSON files
       if (file.type === "application/json") {
         const jsonData = JSON.parse(content);
         const headers = Object.keys(jsonData[0]);
         setData(jsonData);
         setHeaders(headers);
-      } else if (file.type === "text/csv") {
+      }
+      // Process CSV files
+      else if (file.type === "text/csv") {
         const rows = content.split("\n").map((row) => row.split(","));
         const headers = rows[0];
         const parsedData = rows.slice(1).map((row) =>
@@ -44,6 +49,7 @@ export default function App() {
     reader.readAsText(file);
   };
 
+  // Render the selected chart type
   const renderChart = () => {
     if (!selectedX || !selectedY || data.length === 0) return null;
 
@@ -51,6 +57,7 @@ export default function App() {
     const yValues = data.map((item) => +item[selectedY]);
     const maxValue = Math.max(...yValues);
 
+    // Render a bar chart
     if (chartType === "bar") {
       return (
         <svg width="400" height="300" className="bg-gray-100">
@@ -84,7 +91,10 @@ export default function App() {
           />
         </svg>
       );
-    } else if (chartType === "line") {
+    }
+
+    // Render a line chart
+    else if (chartType === "line") {
       const points = xValues.map((_, index) => {
         const x = (index / xValues.length) * 400;
         const y = 300 - (yValues[index] / maxValue) * 250;
@@ -110,10 +120,12 @@ export default function App() {
     <div className="min-h-screen bg-gray-100 text-gray-800 p-6">
       <header className="text-center mb-6">
         <h1 className="text-4xl font-bold">Data Visualization App</h1>
-        <p className="text-gray-600">Upload your data and explore insights visually</p>
+        <p className="text-gray-600">
+          Upload your data and explore insights visually
+        </p>
       </header>
 
-      {/* File Upload */}
+      {/* File Upload Section */}
       <Card className="mb-6 max-w-4xl mx-auto shadow-lg">
         <CardHeader>
           <CardTitle>Upload Your Data</CardTitle>
@@ -128,7 +140,7 @@ export default function App() {
         </CardContent>
       </Card>
 
-      {/* Data Table */}
+      {/* Data Preview Section */}
       {data.length > 0 && (
         <Card className="mb-6 max-w-4xl mx-auto shadow-lg">
           <CardHeader>
@@ -140,7 +152,10 @@ export default function App() {
                 <thead>
                   <tr>
                     {headers.map((header) => (
-                      <th key={header} className="px-4 py-2 bg-gray-200 text-gray-800">
+                      <th
+                        key={header}
+                        className="px-4 py-2 bg-gray-200 text-gray-800"
+                      >
                         {header}
                       </th>
                     ))}
@@ -163,7 +178,7 @@ export default function App() {
         </Card>
       )}
 
-      {/* Chart Options */}
+      {/* Chart Customization Section */}
       {data.length > 0 && (
         <Card className="mb-6 max-w-4xl mx-auto shadow-lg">
           <CardHeader>
@@ -202,7 +217,9 @@ export default function App() {
                 </select>
               </div>
               <div>
-                <label className="block text-gray-600 mb-1">Select Chart Type</label>
+                <label className="block text-gray-600 mb-1">
+                  Select Chart Type
+                </label>
                 <select
                   className="w-full p-2 border rounded-md focus:ring-blue-500 focus:border-blue-500"
                   value={chartType}
@@ -225,7 +242,7 @@ export default function App() {
         </Card>
       )}
 
-      {/* Chart Display */}
+      {/* Chart Display Section */}
       {data.length > 0 && (
         <Card className="mb-6 max-w-4xl mx-auto shadow-lg">
           <CardHeader>

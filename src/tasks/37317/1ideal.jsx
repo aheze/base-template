@@ -1,3 +1,5 @@
+// React Article Comparison App
+
 import React, { useState } from "react";
 import {
   Card,
@@ -6,7 +8,9 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 
+// Main Application Component
 export default function App() {
+  // State Variables
   const [article1, setArticle1] = useState("");
   const [article2, setArticle2] = useState("");
   const [keywords1, setKeywords1] = useState([]);
@@ -16,6 +20,7 @@ export default function App() {
   const [similarityScore, setSimilarityScore] = useState(null);
   const [highlightedDifferences, setHighlightedDifferences] = useState([]);
 
+  // Extract Keywords Function
   const extractKeywords = (text) => {
     const words = text.toLowerCase().split(/\s+/);
     const frequency = words.reduce((acc, word) => {
@@ -28,11 +33,13 @@ export default function App() {
       .map(([word]) => ({ word, count: frequency[word] }));
   };
 
+  // Generate Summary Function
   const generateSummary = (text) => {
     const sentences = text.split(". ");
     return sentences.slice(0, 3).join(". ") + ".";
   };
 
+  // Calculate Similarity Function
   const calculateSimilarity = () => {
     const set1 = new Set(article1.toLowerCase().split(/\s+/));
     const set2 = new Set(article2.toLowerCase().split(/\s+/));
@@ -42,6 +49,7 @@ export default function App() {
     highlightDifferences();
   };
 
+  // Highlight Differences Function
   const highlightDifferences = () => {
     const text1 = article1.split(/\s+/);
     const text2 = article2.split(/\s+/);
@@ -56,6 +64,7 @@ export default function App() {
     setHighlightedDifferences(diffs.join(" "));
   };
 
+  // Handle Compare Function
   const handleCompare = () => {
     setKeywords1(extractKeywords(article1));
     setKeywords2(extractKeywords(article2));
@@ -64,6 +73,7 @@ export default function App() {
     calculateSimilarity();
   };
 
+  // Render Application
   return (
     <div className="min-h-screen bg-gradient-to-r from-blue-50 via-blue-100 to-blue-200 text-gray-800 p-6">
       <header className="text-center mb-6">

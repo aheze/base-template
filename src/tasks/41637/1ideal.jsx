@@ -1,3 +1,4 @@
+// Import necessary modules and components
 import React, { useState, useEffect, useRef } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -5,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 export default function App() {
+  // State variables for tracking goal, saved amount, and expenses
   const [goal, setGoal] = useState({ name: "", amount: 0, timeline: 0 });
   const [savedAmount, setSavedAmount] = useState(0);
   const [expenses, setExpenses] = useState([]);
@@ -13,24 +15,24 @@ export default function App() {
   const progressChartRef = useRef(null);
   const expenseChartRef = useRef(null);
 
+  // Calculate progress percentage
   const progress = (savedAmount / goal.amount) * 100;
 
+  // Auto-saving simulation
   useEffect(() => {
     const interval = setInterval(() => {
-      setSavedAmount((prev) => Math.min(prev + 10, goal.amount)); // Simulate auto-saving
+      setSavedAmount((prev) => Math.min(prev + 10, goal.amount));
     }, 5000);
     return () => clearInterval(interval);
   }, [goal.amount]);
 
+  // Re-draw charts when state changes
   useEffect(() => {
-    if (progressChartRef.current) {
-      drawProgressChart();
-    }
-    if (expenseChartRef.current) {
-      drawExpenseChart();
-    }
+    if (progressChartRef.current) drawProgressChart();
+    if (expenseChartRef.current) drawExpenseChart();
   }, [savedAmount, expenses]);
 
+  // Handle setting a financial goal
   const handleGoalSubmit = (e) => {
     e.preventDefault();
     setGoal({
@@ -42,6 +44,7 @@ export default function App() {
     setExpenses([]);
   };
 
+  // Handle adding a new expense
   const handleExpenseSubmit = (e) => {
     e.preventDefault();
     if (newExpense.category && newExpense.amount > 0) {
@@ -50,6 +53,7 @@ export default function App() {
     }
   };
 
+  // Draw the progress chart
   const drawProgressChart = () => {
     const ctx = progressChartRef.current.getContext("2d");
     const radius = 50;
@@ -59,24 +63,25 @@ export default function App() {
 
     ctx.clearRect(0, 0, 150, 150); // Clear canvas
     ctx.beginPath();
-    ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
+    ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI); // Background circle
     ctx.strokeStyle = "#e2e8f0";
     ctx.lineWidth = 10;
     ctx.stroke();
 
     ctx.beginPath();
-    ctx.arc(centerX, centerY, radius, 0, endAngle);
+    ctx.arc(centerX, centerY, radius, 0, endAngle); // Progress arc
     ctx.strokeStyle = "#4caf50";
     ctx.lineWidth = 10;
     ctx.stroke();
 
-    ctx.font = "16px Arial";
+    ctx.font = "16px Arial"; // Progress text
     ctx.fillStyle = "#4caf50";
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
     ctx.fillText(`${Math.round(progress)}%`, centerX, centerY);
   };
 
+  // Draw the expense chart
   const drawExpenseChart = () => {
     const ctx = expenseChartRef.current.getContext("2d");
     const totalExpense = expenses.reduce((sum, expense) => sum + expense.amount, 0);
@@ -117,6 +122,7 @@ export default function App() {
     <div className="min-h-screen bg-gradient-to-br from-indigo-500 to-purple-600 p-6 text-white">
       <h1 className="text-4xl font-bold text-center mb-8">Financial Goal Tracker</h1>
 
+      {/* Goal Setting Section */}
       <Card className="mb-6 shadow-lg">
         <CardHeader>
           <CardTitle>Set Your Financial Goal</CardTitle>
@@ -126,13 +132,12 @@ export default function App() {
             <Input name="goalName" placeholder="Goal Name (e.g., Vacation)" required />
             <Input name="goalAmount" type="number" placeholder="Target Amount (e.g., 5000)" required />
             <Input name="goalTimeline" type="number" placeholder="Timeline (in weeks)" required />
-            <Button type="submit" className="bg-purple-700 hover:bg-purple-800">
-              Set Goal
-            </Button>
+            <Button type="submit" className="bg-purple-700 hover:bg-purple-800">Set Goal</Button>
           </form>
         </CardContent>
       </Card>
 
+      {/* Progress Section */}
       {goal.amount > 0 && (
         <>
           <Card className="mb-6 shadow-lg">
@@ -148,6 +153,7 @@ export default function App() {
             </CardContent>
           </Card>
 
+          {/* Expense Logging Section */}
           <Card className="mb-6 shadow-lg">
             <CardHeader>
               <CardTitle>Log Expense</CardTitle>
@@ -162,9 +168,7 @@ export default function App() {
                 >
                   <option value="">Select Category</option>
                   {categories.map((category, index) => (
-                    <option key={index} value={category}>
-                      {category}
-                    </option>
+                    <option key={index} value={category}>{category}</option>
                   ))}
                 </select>
                 <Input
@@ -174,13 +178,12 @@ export default function App() {
                   onChange={(e) => setNewExpense({ ...newExpense, amount: parseFloat(e.target.value) })}
                   required
                 />
-                <Button type="submit" className="bg-purple-700 hover:bg-purple-800">
-                  Add Expense
-                </Button>
+                <Button type="submit" className="bg-purple-700 hover:bg-purple-800">Add Expense</Button>
               </form>
             </CardContent>
           </Card>
 
+          {/* Expense Chart */}
           <Card className="mb-6 shadow-lg">
             <CardHeader>
               <CardTitle>Expense Breakdown</CardTitle>
@@ -191,6 +194,7 @@ export default function App() {
             </CardContent>
           </Card>
 
+          {/* Tips Alert */}
           <Alert className="mb-6 shadow-lg">
             <AlertTitle>Tip</AlertTitle>
             <AlertDescription>
