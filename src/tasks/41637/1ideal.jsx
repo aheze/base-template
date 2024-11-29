@@ -1,212 +1,207 @@
-// Import necessary modules and components
-import React, { useState, useEffect, useRef } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import React, { useState, useEffect } from "react";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardFooter,
+} from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Progress } from "@/components/ui/progress";
+import { Slider } from "@/components/ui/slider";
+import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
+import { Switch } from "@/components/ui/switch";
+import Chart from "chart.js/auto";
 
-export default function App() {
-  // State variables for tracking goal, saved amount, and expenses
-  const [goal, setGoal] = useState({ name: "", amount: 0, timeline: 0 });
-  const [savedAmount, setSavedAmount] = useState(0);
-  const [expenses, setExpenses] = useState([]);
-  const [newExpense, setNewExpense] = useState({ category: "", amount: 0 });
-  const [categories] = useState(["Food", "Transport", "Leisure", "Shopping", "Others"]);
-  const progressChartRef = useRef(null);
-  const expenseChartRef = useRef(null);
-
-  // Calculate progress percentage
-  const progress = (savedAmount / goal.amount) * 100;
-
-  // Auto-saving simulation
+// Component to render a spending breakdown chart
+function SpendingChart({ data }) {
   useEffect(() => {
-    const interval = setInterval(() => {
-      setSavedAmount((prev) => Math.min(prev + 10, goal.amount));
-    }, 5000);
-    return () => clearInterval(interval);
-  }, [goal.amount]);
-
-  // Re-draw charts when state changes
-  useEffect(() => {
-    if (progressChartRef.current) drawProgressChart();
-    if (expenseChartRef.current) drawExpenseChart();
-  }, [savedAmount, expenses]);
-
-  // Handle setting a financial goal
-  const handleGoalSubmit = (e) => {
-    e.preventDefault();
-    setGoal({
-      name: e.target.goalName.value,
-      amount: parseFloat(e.target.goalAmount.value),
-      timeline: parseInt(e.target.goalTimeline.value),
+    const ctx = document.getElementById("spendingChart");
+    new Chart(ctx, {
+      type: "pie", // Using a pie chart to visualize expenses
+      data: {
+        labels: Object.keys(data), // Expense categories
+        datasets: [
+          {
+            label: "Expenses",
+            data: Object.values(data), // Values for each category
+            backgroundColor: [
+              "#4CAF50",
+              "#FF9800",
+              "#2196F3",
+              "#F44336",
+              "#9C27B0",
+            ], // Colors for each slice
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: { position: "bottom" }, // Positioning legend at the bottom
+        },
+      },
     });
-    setSavedAmount(0);
-    setExpenses([]);
-  };
+  }, [data]);
 
-  // Handle adding a new expense
-  const handleExpenseSubmit = (e) => {
-    e.preventDefault();
-    if (newExpense.category && newExpense.amount > 0) {
-      setExpenses([...expenses, newExpense]);
-      setNewExpense({ category: "", amount: 0 });
+  return <canvas id="spendingChart" className="w-full h-64"></canvas>;
+}
+
+// Main Financial Goal Tracker App
+export default function App() {
+  // States for managing user data
+  const [goal, setGoal] = useState({ name: "", target: 0, saved: 0 }); // Goal details
+  const [expenses, setExpenses] = useState([]); // List of expenses
+  const [spendingData, setSpendingData] = useState({}); // Spending breakdown
+  const [sliderValue, setSliderValue] = useState(50); // Slider for savings simulation
+  const [reminders, setReminders] = useState(false); // Reminder toggle
+  const [tips, setTips] = useState(""); // Personalized savings tips
+
+  // Function to add an expense and update the chart data
+  const handleAddExpense = (category, amount) => {
+    if (amount > 0) {
+      const newExpenses = [...expenses, { category, amount }];
+      setExpenses(newExpenses);
+
+      // Update the spending breakdown chart data
+      const updatedSpending = { ...spendingData };
+      updatedSpending[category] = (updatedSpending[category] || 0) + amount;
+      setSpendingData(updatedSpending);
     }
   };
 
-  // Draw the progress chart
-  const drawProgressChart = () => {
-    const ctx = progressChartRef.current.getContext("2d");
-    const radius = 50;
-    const centerX = 75;
-    const centerY = 75;
-    const endAngle = (progress / 100) * 2 * Math.PI;
-
-    ctx.clearRect(0, 0, 150, 150); // Clear canvas
-    ctx.beginPath();
-    ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI); // Background circle
-    ctx.strokeStyle = "#e2e8f0";
-    ctx.lineWidth = 10;
-    ctx.stroke();
-
-    ctx.beginPath();
-    ctx.arc(centerX, centerY, radius, 0, endAngle); // Progress arc
-    ctx.strokeStyle = "#4caf50";
-    ctx.lineWidth = 10;
-    ctx.stroke();
-
-    ctx.font = "16px Arial"; // Progress text
-    ctx.fillStyle = "#4caf50";
-    ctx.textAlign = "center";
-    ctx.textBaseline = "middle";
-    ctx.fillText(`${Math.round(progress)}%`, centerX, centerY);
+  // Calculate goal progress percentage
+  const calculateGoalProgress = () => {
+    if (goal.target > 0) {
+      return Math.min((goal.saved / goal.target) * 100, 100); // Cap progress at 100%
+    }
+    return 0;
   };
 
-  // Draw the expense chart
-  const drawExpenseChart = () => {
-    const ctx = expenseChartRef.current.getContext("2d");
-    const totalExpense = expenses.reduce((sum, expense) => sum + expense.amount, 0);
-    const categoryTotals = expenses.reduce((totals, expense) => {
-      totals[expense.category] = (totals[expense.category] || 0) + expense.amount;
-      return totals;
-    }, {});
-
-    const colors = ["#f87171", "#facc15", "#4caf50", "#3b82f6", "#9f7aea"];
-    const centerX = 75;
-    const centerY = 75;
-    const radius = 50;
-    let startAngle = 0;
-
-    ctx.clearRect(0, 0, 150, 150); // Clear canvas
-
-    Object.entries(categoryTotals).forEach(([category, amount], index) => {
-      const sliceAngle = (amount / totalExpense) * 2 * Math.PI;
-      const endAngle = startAngle + sliceAngle;
-
-      ctx.beginPath();
-      ctx.moveTo(centerX, centerY);
-      ctx.arc(centerX, centerY, radius, startAngle, endAngle);
-      ctx.fillStyle = colors[index % colors.length];
-      ctx.fill();
-
-      startAngle = endAngle;
-    });
-
-    ctx.font = "12px Arial";
-    ctx.fillStyle = "#000";
-    ctx.textAlign = "center";
-    ctx.textBaseline = "middle";
-    ctx.fillText("Expenses", centerX, centerY);
+  // Handle slider changes for savings simulation
+  const handleSliderChange = (value) => {
+    setSliderValue(value[0]);
   };
+
+  // Provide personalized savings tips based on current progress and slider value
+  useEffect(() => {
+    if (goal.target > 0) {
+      const projectedCompletion =
+        goal.saved +
+        (sliderValue / 100) * goal.target; // Simulate additional savings
+
+      setTips(
+        projectedCompletion >= goal.target
+          ? "You’re on track to achieve your goal. Great job!"
+          : `Try saving an extra $${((goal.target - goal.saved) / 4).toFixed(
+              2
+            )} weekly to meet your target.`
+      );
+    }
+  }, [goal, sliderValue]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-500 to-purple-600 p-6 text-white">
-      <h1 className="text-4xl font-bold text-center mb-8">Financial Goal Tracker</h1>
-
-      {/* Goal Setting Section */}
-      <Card className="mb-6 shadow-lg">
+    <div className="min-h-screen bg-gray-100 flex flex-col items-center p-6">
+      {/* Financial Goal Tracker */}
+      <Card className="max-w-md w-full mb-6">
         <CardHeader>
-          <CardTitle>Set Your Financial Goal</CardTitle>
+          <CardTitle>Financial Goal Tracker</CardTitle>
+          <CardDescription>Set, track, and achieve your financial goals.</CardDescription>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleGoalSubmit} className="space-y-4">
-            <Input name="goalName" placeholder="Goal Name (e.g., Vacation)" required />
-            <Input name="goalAmount" type="number" placeholder="Target Amount (e.g., 5000)" required />
-            <Input name="goalTimeline" type="number" placeholder="Timeline (in weeks)" required />
-            <Button type="submit" className="bg-purple-700 hover:bg-purple-800">Set Goal</Button>
-          </form>
+          <Input
+            placeholder="Goal Name (e.g., Vacation)"
+            value={goal.name}
+            onChange={(e) => setGoal({ ...goal, name: e.target.value })}
+            className="mb-4"
+          />
+          <div className="flex space-x-2">
+            <Input
+              placeholder="Target Amount ($)"
+              type="number"
+              value={goal.target}
+              onChange={(e) => setGoal({ ...goal, target: parseFloat(e.target.value) })}
+            />
+            <Input
+              placeholder="Saved Amount ($)"
+              type="number"
+              value={goal.saved}
+              onChange={(e) => setGoal({ ...goal, saved: parseFloat(e.target.value) })}
+            />
+          </div>
+          <Progress value={calculateGoalProgress()} className="mt-4" />
+          <p className="mt-2 text-center">
+            Progress: {calculateGoalProgress().toFixed(2)}%
+          </p>
         </CardContent>
       </Card>
 
-      {/* Progress Section */}
-      {goal.amount > 0 && (
-        <>
-          <Card className="mb-6 shadow-lg">
-            <CardHeader>
-              <CardTitle>Progress</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <canvas ref={progressChartRef} width="150" height="150" className="mx-auto mb-4"></canvas>
-              <p className="text-sm">
-                You’ve saved <span className="font-semibold">${savedAmount.toFixed(2)}</span> out of{" "}
-                <span className="font-semibold">${goal.amount.toFixed(2)}</span>.
-              </p>
-            </CardContent>
-          </Card>
+      {/* Daily Expense Tracker with Chart */}
+      <Card className="max-w-lg w-full mb-6">
+        <CardHeader>
+          <CardTitle>Daily Expense Tracker</CardTitle>
+          <CardDescription>Track and analyze your expenses.</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="flex space-x-2">
+            <Input
+              placeholder="Category"
+              onChange={(e) => handleAddExpense(e.target.value, 100)}
+            />
+            <Button onClick={() => handleAddExpense("Food", 50)}>
+              Add Expense
+            </Button>
+          </div>
+          <SpendingChart data={spendingData} />
+        </CardContent>
+      </Card>
 
-          {/* Expense Logging Section */}
-          <Card className="mb-6 shadow-lg">
-            <CardHeader>
-              <CardTitle>Log Expense</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <form onSubmit={handleExpenseSubmit} className="space-y-4">
-                <select
-                  className="w-full p-2 rounded border bg-white text-gray-900"
-                  value={newExpense.category}
-                  onChange={(e) => setNewExpense({ ...newExpense, category: e.target.value })}
-                  required
-                >
-                  <option value="">Select Category</option>
-                  {categories.map((category, index) => (
-                    <option key={index} value={category}>{category}</option>
-                  ))}
-                </select>
-                <Input
-                  type="number"
-                  placeholder="Amount"
-                  value={newExpense.amount}
-                  onChange={(e) => setNewExpense({ ...newExpense, amount: parseFloat(e.target.value) })}
-                  required
-                />
-                <Button type="submit" className="bg-purple-700 hover:bg-purple-800">Add Expense</Button>
-              </form>
-            </CardContent>
-          </Card>
+      {/* Personalized Savings Tips */}
+      <Card className="max-w-lg w-full mb-6">
+        <CardHeader>
+          <CardTitle>Personalized Savings Tips</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <p>{tips}</p>
+        </CardContent>
+      </Card>
 
-          {/* Expense Chart */}
-          <Card className="mb-6 shadow-lg">
-            <CardHeader>
-              <CardTitle>Expense Breakdown</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <canvas ref={expenseChartRef} width="150" height="150" className="mx-auto mb-4"></canvas>
-              {expenses.length === 0 && <p>No expenses logged yet.</p>}
-            </CardContent>
-          </Card>
+      {/* Predictive Insights Section */}
+      <Card className="max-w-lg w-full mb-6">
+        <CardHeader>
+          <CardTitle>Predictive Insights</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <Slider
+            value={[sliderValue]}
+            onValueChange={handleSliderChange}
+            min={0}
+            max={100}
+            step={10}
+            className="mb-4"
+          />
+          <p>
+            Adjust your savings rate: {sliderValue}% of your target goal.
+          </p>
+        </CardContent>
+      </Card>
 
-          {/* Tips Alert */}
-          <Alert className="mb-6 shadow-lg">
-            <AlertTitle>Tip</AlertTitle>
-            <AlertDescription>
-              {progress < 50
-                ? "Focus on cutting unnecessary expenses!"
-                : progress < 80
-                ? "Automate savings to stay consistent."
-                : "Almost there! Avoid impulse purchases."}
-            </AlertDescription>
-          </Alert>
-        </>
-      )}
+      {/* Customizable Reminders */}
+      <Card className="max-w-lg w-full mb-6">
+        <CardHeader>
+          <CardTitle>Reminders</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <Switch
+            checked={reminders}
+            onCheckedChange={setReminders}
+            className="mb-4"
+          />
+          <p>{reminders ? "Reminders Enabled" : "Reminders Disabled"}</p>
+        </CardContent>
+      </Card>
     </div>
   );
 }

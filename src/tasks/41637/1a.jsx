@@ -1,110 +1,84 @@
-import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import React, { useState } from 'react';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Progress } from "@/components/ui/progress";
+import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
-import { Badge } from "@/components/ui/badge";
+import { Progress } from "@/components/ui/progress";
 
 function App() {
-  const [goal, setGoal] = useState({ amount: 5000, saved: 0, timeline: 12 });
+  const [goal, setGoal] = useState({ name: '', amount: 0, timeline: '' });
+  const [saved, setSaved] = useState(0);
   const [expenses, setExpenses] = useState([]);
-  const [tips, setTips] = useState([]);
-  const [forecast, setForecast] = useState(null);
 
-  useEffect(() => {
-    const savedPercentage = (goal.saved / goal.amount) * 100;
-    if (savedPercentage >= 50 && savedPercentage < 100) {
-      setTips([...tips, "Great job! You've hit the halfway mark. Keep going!"]);
-    }
-    // Simple forecast logic
-    const remainingWeeks = goal.timeline * 4 - (goal.saved / (goal.amount / (goal.timeline * 4)));
-    setForecast(remainingWeeks > 0 ? `You might need ${remainingWeeks} more weeks at this rate.` : "You're on track!");
-  }, [goal]);
+  const handleGoalChange = (e) => {
+    setGoal({ ...goal, [e.target.name]: e.target.value });
+  };
 
   const addExpense = (category, amount) => {
     setExpenses([...expenses, { category, amount }]);
-    setGoal({...goal, saved: goal.saved - amount});
   };
 
-  const updateSavings = (newAmount) => {
-    setGoal({...goal, saved: newAmount});
-  };
+  const totalExpenses = expenses.reduce((sum, expense) => sum + parseFloat(expense.amount), 0);
+  const progress = Math.min((saved / goal.amount) * 100, 100);
 
   return (
-    <div className="flex flex-col items-center p-4 space-y-4">
-      <Card className="w-full max-w-lg">
+    <div className="container mx-auto p-4 sm:p-8">
+      <Card className="mb-4">
         <CardHeader>
-          <CardTitle>Financial Goal</CardTitle>
-          <CardDescription>Set and track your savings goal.</CardDescription>
+          <CardTitle>Set Your Financial Goal</CardTitle>
         </CardHeader>
         <CardContent>
           <Input 
-            type="number" 
-            placeholder="Goal Amount" 
-            value={goal.amount} 
-            onChange={e => setGoal({...goal, amount: Number(e.target.value)})} 
+            name="name" 
+            value={goal.name} 
+            onChange={handleGoalChange} 
+            placeholder="Goal Name" 
+            className="mb-2"
           />
           <Input 
+            name="amount" 
             type="number" 
-            placeholder="Timeline (months)" 
-            value={goal.timeline} 
-            onChange={e => setGoal({...goal, timeline: Number(e.target.value)})} 
+            value={goal.amount} 
+            onChange={handleGoalChange} 
+            placeholder="Target Amount ($)" 
+            className="mb-2"
           />
-          <Progress value={(goal.saved / goal.amount) * 100} className="mt-4"/>
-          {goal.saved >= goal.amount * 0.5 && <Badge className="mt-2">50% Saved!</Badge>}
+          <Input 
+            name="timeline" 
+            type="date" 
+            value={goal.timeline} 
+            onChange={handleGoalChange} 
+            placeholder="Timeline" 
+          />
         </CardContent>
         <CardFooter>
-          <Button onClick={() => updateSavings(goal.saved + 100)}>Add Savings</Button>
+          <Progress value={progress} className="w-full"/>
+          <p className="text-center mt-2">{`${progress.toFixed(2)}% saved`}</p>
         </CardFooter>
       </Card>
 
-      <Card className="w-full max-w-lg">
+      <Card className="mb-4">
         <CardHeader>
-          <CardTitle>Expenses</CardTitle>
+          <CardTitle>Track Your Expenses</CardTitle>
         </CardHeader>
         <CardContent>
-          {expenses.map((exp, index) => (
-            <div key={index} className="flex justify-between mb-2">
-              <span>{exp.category}</span>
-              <span>${exp.amount}</span>
-            </div>
-          ))}
-          <Input 
-            type="text" 
-            placeholder="Category" 
-            onBlur={e => addExpense(e.target.value, 0)} 
-          />
-          <Input 
-            type="number" 
-            placeholder="Amount" 
-            onBlur={e => addExpense("", Number(e.target.value))} 
-          />
+          <Input placeholder="Category" className="mb-2" />
+          <Input type="number" placeholder="Amount ($)" className="mb-2" />
+          <Button onClick={() => addExpense('New', 0)}>Add Expense</Button>
         </CardContent>
       </Card>
 
-      <Card className="w-full max-w-lg">
+      <Card>
         <CardHeader>
-          <CardTitle>Savings Tips</CardTitle>
+          <CardTitle>Savings Simulator</CardTitle>
         </CardHeader>
         <CardContent>
-          {tips.map((tip, idx) => <p key={idx}>{tip}</p>)}
+          <Slider defaultValue={[50]} max={200} step={10} onValueChange={(value) => setSaved(saved + value[0])} />
+          <p className="mt-2">Adjust weekly savings: ${saved}</p>
         </CardContent>
       </Card>
 
-      <Card className="w-full max-w-lg">
-        <CardHeader>
-          <CardTitle>Forecast</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <p>{forecast}</p>
-          <Slider 
-            defaultValue={[0]} 
-            max={100} 
-            onValueChange={(val) => updateSavings(goal.saved + val[0])} 
-          />
-        </CardContent>
-      </Card>
+      {/* Placeholder for future features like insights, reminders, etc. */}
     </div>
   );
 }
